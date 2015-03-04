@@ -1,0 +1,20 @@
+#include <LiquidCrystal.h>
+
+// El LCD recibe los datos a mostrar por los pines D4-D7, D0-D3 no se usan //
+#define D4;  // Primer bit de datos, salida digital //
+#define D5;  // Segundo bit de datos, salida digital//
+#define D6;  // tercer bit de datos, salida digital // 
+#define D7;  // cuarto bit de datos, salida digital //
+
+#define E;  // Enable, habilita el LCD para recibir datos, salida digital//
+#define RS; // Selector de registro, indica si se le envían datos u ordenes de control, salida digital //
+
+LiquidCrystal lcd(RS, E, D4, D5, D6 , D7);  // Crea el objeto LCD //
+
+void setup() { 
+  lcd.begin(16, 2); // Le indica que es un LCD de 16 columnas y 2 filas //
+  lcd.setCursor(0,1); // Va a mostrar información en la segunda línea //
+  lcd.write("El cajon de Ardu "); // texto a mostrar //
+}
+
+void loop() { }
