@@ -1,3 +1,5 @@
+/* Library used by this sketch */
+
 #include <LiquidCrystal.h>
 #include <dht.h>
 #include <SFE_BMP180.h>
@@ -50,3 +52,9 @@ int read_LCD_buttons()
 dht DHT;
 // Crea el objeto pressure (Sensor BMP180)
 SFE_BMP180 pressure; 
+
+void setup(){
+}
+
+void loop(){
+}
