@@ -11,6 +11,9 @@
 #define DHT22_PIN 13
 // Variable to read the DHT status
 int chk;
+// Variable to read the display button
+int button;
+int lcdState;
 // Altitude in Madrid
 #define ALTITUDE 635
 
@@ -51,6 +54,8 @@ void setup(){
 }
 
 void loop(){
+ 
+ /* Read the temperature and humidity */
  Serial.print("DHT22, \t");
  chk = DHT.read22(DHT22_PIN);
  switch (chk)
@@ -68,9 +73,22 @@ void loop(){
    Serial.print("Unknown error,\t"); 
    break;
 }
- 
- +  // DISPLAY DATA on the LCD
- +  Serial.print(DHT.humidity, 1);
- +  Serial.print(",\t");
- +  Serial.println(DHT.temperature, 1);
+
+/* Check if any button is pressed */
+button = read_LCD_buttons();
+switch(button){
+ case btnLEFT:
+  lcdState --;
+ case btnRIGHT:
+  lcdState ++;
+}
+if btnState == 0
+ btnState = 2;
+elseif btnState == 3
+ btnState = 1;
+
+// DISPLAY DATA on the LCD
+Serial.print(DHT.humidity, 1);
+Serial.print(",\t");
+Serial.println(DHT.temperature, 1);
 }
