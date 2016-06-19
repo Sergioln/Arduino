@@ -16,6 +16,9 @@ int button;
 int lcdState;
 // Altitude in Madrid
 #define ALTITUDE 635
+// Variables for the BMP180 data
+char status;
+double T,P,p0,a;
 
 // define some values used by the LCD panel and buttons
 int lcd_key     = 0;
@@ -51,11 +54,25 @@ SFE_BMP180 pressure; // Crea el objeto pressure (Sensor BMP180)
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);  // Crea el objeto LCD //
 
 void setup(){
+ Serial.begin(9600);
+ lcd.begin(16, 2);
+   // Inicia el sensor BMP180
+  if (pressure.begin())
+    Serial.println("BMP180 init success");
+    else
+  {
+    // Oops, something went wrong, this is usually a connection problem,
+    // see the comments at the top of this sketch for the proper connections.
+
+    Serial.println("BMP180 init fail\n\n");
+    while(1); // Pause forever.
+  }
+ lcd.setCursor(0,0);
 }
 
 void loop(){
  
- /* Read the temperature and humidity */
+ /* Read the temperature and humidity from tthe DHT22 */
  Serial.print("DHT22, \t");
  chk = DHT.read22(DHT22_PIN);
  switch (chk)
@@ -74,6 +91,55 @@ void loop(){
    break;
 }
 
+
+/* Read the temperature and pressure from the BMP180 */
+  status = pressure.startTemperature();
+  if (status != 0)
+  {
+    // Wait for the measurement to complete:
+    delay(status);
+    
+    status = pressure.getTemperature(T);
+    if (status != 0)
+    {
+      // Print out the measurement:
+      Serial.print("temperature: ");
+      Serial.print(T,2);
+      Serial.print(" deg C, ");
+
+      status = pressure.startPressure(3);
+      if (status != 0)
+      {
+        // Wait for the measurement to complete:
+        delay(status);
+
+        status = pressure.getPressure(P,T);
+        if (status != 0)
+        {
+          // Print out the measurement:
+          Serial.print("absolute pressure: ");
+          Serial.print(P,2);
+          Serial.print(" mb, ");
+
+          p0 = pressure.sealevel(P,ALTITUDE); // we're at 1655 meters (Boulder, CO)
+          Serial.print("relative (sea-level) pressure: ");
+          Serial.print(p0,2);
+          Serial.print(" mb, ");
+
+          a = pressure.altitude(P,p0);
+          Serial.print("computed altitude: ");
+          Serial.print(a,0);
+          Serial.print(" meters, ");
+
+             }
+        else Serial.println("error retrieving pressure measurement\n");
+      }
+      else Serial.println("error starting pressure measurement\n");
+    }
+    else Serial.println("error retrieving temperature measurement\n");
+  }
+  else Serial.println("error starting temperature measurement\n");
+
 /* Check if any button is pressed */
 button = read_LCD_buttons();
 switch(button){
@@ -82,12 +148,35 @@ switch(button){
  case btnRIGHT:
   lcdState ++;
 }
-if btnState == 0
- btnState = 2;
-elseif btnState == 3
- btnState = 1;
+if (lcdState == 0)
+ lcdState = 2;
+else if (lcdState == 3)
+ lcdState = 1;
 
 // DISPLAY DATA on the LCD
+switch (lcdState){
+ case 1: // Display temp and humidity from DHT22
+  lcd.clear();
+  lcd.setCursor(0,0); // Va a mostrar información en la segunda línea //
+  lcd.print("Temp:");
+  lcd.print(DHT.temperature,1); // texto a mostrar //
+  lcd.write(223); // Degree symbol
+  lcd.print("C ");
+  lcd.setCursor(0,1);
+  lcd.print("Humity:");                                             
+  lcd.print(DHT.humidity,1);
+  lcd.print("%");
+ 
+ case 2: // Display the data from BMP180
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Presion: ");
+  lcd.print(P,2);
+  lcd.print(" mb");
+  lcd.setCursor(0,1);
+  lcd.print(T,2);
+}
+
 Serial.print(DHT.humidity, 1);
 Serial.print(",\t");
 Serial.println(DHT.temperature, 1);
