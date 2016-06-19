@@ -13,7 +13,7 @@
 int chk;
 // Variable to read the display button
 int button;
-int lcdState;
+int lcdState =1;
 // Altitude in Madrid
 #define ALTITUDE 635
 // Variables for the BMP180 data
@@ -145,13 +145,15 @@ button = read_LCD_buttons();
 switch(button){
  case btnLEFT:
   lcdState --;
+  break;
  case btnRIGHT:
   lcdState ++;
+  break;
 }
 if (lcdState == 0)
- lcdState = 2;
+ {lcdState = 2;}
 else if (lcdState == 3)
- lcdState = 1;
+ {lcdState = 1;}
 
 // DISPLAY DATA on the LCD
 switch (lcdState){
@@ -166,6 +168,7 @@ switch (lcdState){
   lcd.print("Humity:");                                             
   lcd.print(DHT.humidity,1);
   lcd.print("%");
+  break;
  
  case 2: // Display the data from BMP180
   lcd.clear();
@@ -175,9 +178,14 @@ switch (lcdState){
   lcd.print(" mb");
   lcd.setCursor(0,1);
   lcd.print(T,2);
+  break;
 }
 
 Serial.print(DHT.humidity, 1);
 Serial.print(",\t");
 Serial.println(DHT.temperature, 1);
+Serial.print("\n Valor lcdState: ");
+Serial.print(lcdState, 1);
+
+delay(1000);
 }
