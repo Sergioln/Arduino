@@ -158,7 +158,7 @@ else if (lcdState == 3)
 // DISPLAY DATA on the LCD
 switch (lcdState){
  case 1: // Display temp and humidity from DHT22
-  //lcd.clear();
+  lcd.clear();
   lcd.setCursor(0,0); // Va a mostrar información en la segunda línea //
   lcd.print("Temp:");
   lcd.print(DHT.temperature,1); // texto a mostrar //
@@ -171,7 +171,7 @@ switch (lcdState){
   break;
  
  case 2: // Display the data from BMP180
-  //lcd.clear();
+  lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Presión: ");
   lcd.print(P,2);
