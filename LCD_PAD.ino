@@ -20,6 +20,9 @@ int lcdState =1;
 char status;
 double T,P,p0,a;
 
+// Variable to read the MQ-135 sensor
+int QofAir;
+
 // define some values used by the LCD panel and buttons
 int lcd_key     = 0;
 int adc_key_in  = 0;
@@ -140,6 +143,9 @@ void loop(){
   }
   else Serial.println("error starting temperature measurement\n");
 
+/* Read the data from the MQ-135 sensor */
+QofAir = analogRead(1); 
+
 /* Check if any button is pressed */
 button = read_LCD_buttons();
 switch(button){
@@ -151,8 +157,8 @@ switch(button){
   break;
 }
 if (lcdState == 0)
- {lcdState = 2;}
-else if (lcdState == 3)
+ {lcdState = 3;}
+else if (lcdState == 4)
  {lcdState = 1;}
 
 // DISPLAY DATA on the LCD
@@ -181,6 +187,14 @@ switch (lcdState){
   lcd.print(T,2);
   lcd.write(223); // Degree symbol
   break;
+ 
+ case 3: // Display the Air quality MQ-135 sensor
+ lcd.clear();
+ lcd.setCursor(0,0);
+ lcd.print("Valor MQ-135: ");
+ lcd.print(QofAir,0);
+ lcd.setCursor(0,1);
+ lcd.print("El aire es: ");
 }
 
 Serial.print(DHT.humidity, 1);
