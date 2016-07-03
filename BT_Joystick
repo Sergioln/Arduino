@@ -1,0 +1,49 @@
+#include <SoftwareSerial.h>  //For use digital pins as serials ports
+
+
+#define pinX 23
+#define pinY 24
+#define pinButton 2
+
+int ejeX;
+int ejeY;
+int button;
+
+
+
+// Create a serial port on pins 9 and 10
+SoftwareSerial BT1(9,10);  // RX/TX
+ 
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  BT1.begin(9600);
+  pinMode(pinX, INPUT);
+  pinMode(pinY, INPUT);
+  pinMode(pinButton, INPUT);
+}
+
+void loop() {
+
+  //Read the joystick and the button
+  ejeX = analogRead(pinX);
+  ejeY = analogRead(pinY);
+  button = digitalRead(pinButton);
+
+  //print the the values read on the serial port
+  Serial.print("Eje X= ");
+  Serial.print(ejeX);
+  Serial.print("\tEje Y= ");
+  Serial.print(ejeY);
+  Serial.print("\tButton = ");
+  Serial.println(button);
+
+  //Send the data over BT1
+  BT1.print("Eje X= ");
+  BT1.print(ejeX);
+  BT1.print("\tEje Y= ");
+  BT1.print(ejeY);
+  BT1.print("\tButton = ");
+  BT1.println(button);
+  delay(1000);
+}
